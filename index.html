@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Will you be my Valentine?</title>
+    <style>
+        :root {
+            --primary: #ff4d6d;
+            --success: #4ade80;
+            --bg: #fff0f3;
+        }
+
+        body {
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: var(--bg);
+            font-family: 'Segoe UI', sans-serif;
+            overflow: hidden;
+            touch-action: manipulation;
+        }
+
+        #overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .enter-btn {
+            padding: 20px 40px;
+            font-size: 20px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 77, 109, 0.3);
+        }
+
+        .heart {
+            position: absolute;
+            font-size: 20px;
+            animation: float 4s linear infinite;
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh);
+            }
+
+            100% {
+                transform: translateY(-10vh);
+            }
+        }
+
+        .card {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            text-align: center;
+            width: 90%;
+            max-width: 400px;
+            z-index: 10;
+            display: none;
+        }
+
+        h1 {
+            color: var(--primary);
+            font-size: 1.6rem;
+            margin-bottom: 2rem;
+        }
+
+        .btn-container {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            align-items: center;
+            min-height: 60px;
+        }
+
+        button {
+            padding: 10px 25px;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        #yesBtn {
+            background-color: var(--success);
+            color: white;
+        }
+
+        #noBtn {
+            background-color: #fca5a5;
+            color: white;
+        }
+
+        #message {
+            display: none;
+            font-size: 1.5rem;
+            color: var(--primary);
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+    <audio id="bgMusic" loop>
+        <source src="bg-song.mp3" type="audio/mpeg">
+    </audio>
+
+    <div id="overlay">
+        <button class="enter-btn" id="enterBtn">Click to Start ❤️</button>
+    </div>
+
+    <div class="card" id="card">
+        <h1 id="question">Loading...</h1>
+        <div class="btn-container" id="btnContainer">
+            <button id="yesBtn">Yes</button>
+            <button id="noBtn">No</button>
+        </div>
+        <div id="message">Yay! I knew you'd say yes! ❤️</div>
+    </div>
+
+    <script>
+        // Set the name from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const name = urlParams.get('name') || "Beautiful";
+        document.getElementById('question').innerText = `${name}, will you be my Valentine?`;
+
+        // Hearts
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('heart'); heart.innerHTML = '❤️';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.animationDuration = Math.random() * 3 + 2 + 's';
+            document.body.appendChild(heart);
+            setTimeout(() => heart.remove(), 5000);
+        }
+        setInterval(createHeart, 800);
+
+        // Logic
+        const audio = document.getElementById('bgMusic');
+        const enterBtn = document.getElementById('enterBtn');
+        const overlay = document.getElementById('overlay');
+        const card = document.getElementById('card');
+        const noBtn = document.getElementById('noBtn');
+        const yesBtn = document.getElementById('yesBtn');
+        const btnContainer = document.getElementById('btnContainer');
+        const question = document.getElementById('question');
+        const message = document.getElementById('message');
+
+        enterBtn.addEventListener('click', () => {
+            overlay.style.display = 'none';
+            card.style.display = 'block';
+            audio.play().catch(e => console.log("Audio play failed"));
+        });
+
+        function moveButton() {
+            noBtn.style.position = 'absolute';
+            const x = Math.random() * (window.innerWidth - noBtn.offsetWidth - 20);
+            const y = Math.random() * (window.innerHeight - noBtn.offsetHeight - 20);
+            noBtn.style.left = `${Math.max(10, x)}px`;
+            noBtn.style.top = `${Math.max(10, y)}px`;
+        }
+
+        noBtn.addEventListener('mouseover', moveButton);
+        noBtn.addEventListener('touchstart', (e) => { e.preventDefault(); moveButton(); });
+
+        yesBtn.addEventListener('click', () => {
+            question.style.display = 'none';
+            btnContainer.style.display = 'none';
+            message.style.display = 'block';
+        });
+    </script>
+</body>
+
+</html>
